@@ -11,7 +11,7 @@ func init() {
 	flag.Bool("no-build", false, "by default it wil build the plugin, use this option with build-dir and no-cleanup to create an project template")
 	flag.Bool("no-cleanup", false, "will not remove build dir when provided")
 	flag.Bool("debug", false, "print debug information")
-	flag.String("save-path", "/usr/share/ddns-server/plugins", "the path where plugin will be saved on successful build")
+	flag.String("save-path", "/usr/share/ddns-srv", "the path where plugin will be saved on successful build")
 
 	flag.Usage = func() {
 		fmt.Fprintf(flag.CommandLine.Output(), "Usage: %s <package...>\n", os.Args[0])
