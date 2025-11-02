@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"debug/buildinfo"
 	"fmt"
 	"log"
 	"plugin"
 	"reflect"
+	"runtime/debug"
 	"text/tabwriter"
 
 	"github.com/libdns/libdns"
@@ -37,18 +39,6 @@ func checkPlugin(file string) {
 		log.Fatal(err)
 	}
 
-	name, err := mod.Lookup("PluginModule")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	version, err := mod.Lookup("PluginVersion")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	module, err := mod.Lookup("Plugin")
 
 	if err != nil {
@@ -60,9 +50,15 @@ func checkPlugin(file string) {
 	var buf = new(bytes.Buffer)
 	var writer = tabwriter.NewWriter(buf, 0, 0, 1, ' ', 0)
 
+	info, err := getBuildInfo(file, shadow.Elem().Type().Elem().PkgPath())
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	_, _ = fmt.Fprintf(writer, "File\t%s\n", file)
-	_, _ = fmt.Fprintf(writer, "PluginModule\t%s\n", *(name.(*string)))
-	_, _ = fmt.Fprintf(writer, "PluginVersion\t%s\n", *(version.(*string)))
+	_, _ = fmt.Fprintf(writer, "Module Path\t%s\n", info.Path)
+	_, _ = fmt.Fprintf(writer, "Module Version\t%s\n", info.Version)
 	_, _ = fmt.Fprintf(writer, "Plugin\t%T\n", object)
 	_, _ = fmt.Fprint(writer, "LibDNS implementations:\n")
 
@@ -93,4 +89,22 @@ func checkPlugin(file string) {
 	for scanner.Scan() {
 		log.Println(scanner.Text())
 	}
+}
+
+func getBuildInfo(file string, pkg string) (*debug.Module, error) {
+
+	info, err := buildinfo.ReadFile(file)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, dep := range info.Deps {
+
+		if dep.Path == pkg {
+			return dep, nil
+		}
+	}
+
+	return nil, fmt.Errorf("package not found: %s", pkg)
 }

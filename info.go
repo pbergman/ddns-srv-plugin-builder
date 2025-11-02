@@ -7,15 +7,8 @@ import (
 )
 
 type listInfo struct {
-	ImportPath string      `json:"ImportPath"`
-	Name       string      `json:"Name"`
-	Module     *moduleInfo `json:"Module"`
-}
-
-type moduleInfo struct {
-	Path    string      `json:"Path"`
-	Version string      `json:"Version"`
-	Replace *moduleInfo `json:"Replace,omitempty"`
+	ImportPath string `json:"ImportPath"`
+	Name       string `json:"Name"`
 }
 
 func getModuleInfo(ctx context.Context, build *buildCtx, debug bool) (*listInfo, error) {

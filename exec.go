@@ -75,10 +75,6 @@ func goBuildPlugin(path string, module *listInfo, build *buildCtx, debug bool) s
 		"-o", filepath.Join(path, build.name+".so"),
 	}
 
-	if nil != module.Module.Replace {
-		args[5] += " -X 'main.PluginVersion=" + module.Module.Replace.Version + "(" + module.Module.Replace.Path + ")" + "'"
-	}
-
 	if err := run(context.Background(), build.dir, nil, debug, args...); err != nil {
 		log.Fatal(err)
 	}

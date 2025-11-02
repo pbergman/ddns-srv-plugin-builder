@@ -18,8 +18,6 @@ import (
 
 var (
 	Plugin *{{ .Name }}.Provider
-	PluginModule    = "{{ .Module.Path }}"
-	PluginVersion   = "{{ if .Module.Replace }}{{ .Module.Replace.Version }}({{ .Module.Replace.Path }}){{ else }}{{ .Module.Version }}{{ end }}" 
 )
 `)
 
