@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,7 +13,7 @@ func main() {
 
 	flag.Parse()
 
-	if flag.NArg() == 0 {
+	if flag.NArg() == 0 && false == inputOption[bool]("version") {
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -26,6 +27,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if inputOption[bool]("version") {
+		fmt.Println(getVersion())
+		os.Exit(0)
+	}
+
 	var debug = inputOption[bool]("debug")
 	var noBuild = inputOption[bool]("no-build")
 
@@ -36,6 +42,8 @@ func main() {
 	}
 
 	var ctx context.Context = context.Background()
+
+	log.Printf("build version: %s", getVersion())
 
 	for build := range buildContext(cwd) {
 
